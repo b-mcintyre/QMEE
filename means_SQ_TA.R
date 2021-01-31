@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 #TITLE: Code for data checking, cleaning, coding an averages table based on genotypes, and plotting.  
 #code tested on R-4.0.3
 
@@ -139,7 +138,6 @@ print(geno_sqb)
 # interesting that distribution is different between the two measurements 
 ###############################################################################
 ###############################################################################
-=======
 #TITLE: Code for data checking, cleaning, coding an averages table based on genotypes, and plotting.  
 #code tested on R-4.0.3
 
@@ -280,4 +278,3 @@ print(geno_sqb)
 # interesting that distribution is different between the two measurements 
 ###############################################################################
 ###############################################################################
->>>>>>> d5f28fc493b8c13823d1ed1d96c22936e214af85
