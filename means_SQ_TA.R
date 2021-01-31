@@ -1,6 +1,7 @@
 #TITLE: Code for data checking, cleaning, coding an averages table based on genotypes, and plotting.  
 #code tested on R-4.0.3
 
+
 #download tidyverse
 library(tidyverse)
 
