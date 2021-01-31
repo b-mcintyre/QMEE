@@ -88,7 +88,7 @@ dup_dat <- Wing_Table_Geno %>%
         group_by(TotalArea.px,) %>%
         filter(n()>1)
 
-dup_dat <- dplyr::select(dub_dat, genotype, TotalArea.px, obs)
+dup_dat <- dplyr::select(dup_dat, genotype, TotalArea.px, obs)
 # double check wings to see if they are duplicate or if very unlikely 
 
 # write a csv in order to print and reference for manual check 
