@@ -1,9 +1,21 @@
 # QMEE
 Used for QMEE
 
+Exercise 3
+Main file to look at called: "GGboxplots" found in b-mcintyre/QMEE in the main branch
+data taken from data set titled "NEW_CD_DGRO_Subset_Data_2019_V2"
+
+In my boxplots I am trying to show two related points the first two boxplots show the variation between mutant 
+phenotypes regardless of the genetic backgrounds for both the total area as well as the semi-quantitative scale.
+The third and fourth boxplots show the variation within mutant phenotypes between different genetic backgrounds
+for both the total area as well as the semi-quantitative scale. 
+I chose to display this information in boxplot format as I had a medium data set size and I believed that boxplots
+would allow for a good understanding of this variation through observing the lengths of the boxes and the min and max values. In other words, the longer the boxplot the more variable the mutation is when comparing irrespective of backgrounds as well as how variable a mutation is between backgrounds. Furthermore, I believed this choice would give information of the distribution of the mutational effects within the different backgrounds depending on the spread of the quartiles. 
+The Cleaveland hierarchy lead me to these choices. I felt that comparing positions along a common scale(via semi-quantitative or total area measurements) and comparing the lengths of the boxes and their min/maximums on this scale would provide a clear picture of the variation of different mutations.
+
 Exercise 2
 Main file to look at called: "means_SQ_TA" found in b-mcintyre/QMEE in the main branch
-data taken from dataset titled "NEW_CD_DGRO_Subset_Data_2019_V2"
+data taken from data set titled "NEW_CD_DGRO_Subset_Data_2019_V2"
 
 Main investigations include ensuring there is no duplicates in the total areas measurements as it was done by a macro
 implying that it is very unlikely a wing measure will be the same. If there are found duplicates I must got back to the
