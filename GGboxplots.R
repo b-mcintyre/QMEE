@@ -1,4 +1,5 @@
 # Code made in R-4.0.3
+# Please read README.md for more information
 
 library(tidyverse)
 theme_set(theme_bw())
@@ -14,14 +15,14 @@ Wing_Table_mmsqr <- Wing_Table %>%
     TotalArea.px = NULL
   )
 
-# boxplot comparing mutant phenotypes effect on Total Area 
+# box plot comparing mutant phenotypes effect on Total Area 
 # regardless of genetic backgrounds
 BP_mutant_TA <- ggplot(Wing_Table_mmsqr, aes(y=TA_mmsqr, x=Allele_1)) + 
   geom_boxplot() +
   labs(x="Mutant Allele", y="Total Area mmsqr")
 print(BP_mutant_TA)
 
-# boxplot comparing mutant phenotypic effect on SQ measurement
+# box plot comparing mutant phenotypic effect on SQ measurement
 # regardless of genetic background
 BP_mutant_SQ <- ggplot(Wing_Table_mmsqr, aes(y=SQ_Measure, x=Allele_1)) + 
   geom_boxplot() +
@@ -36,7 +37,7 @@ BPBG_mutant_SQ <- ggplot(Wing_Table_mmsqr, aes(y=SQ_Measure, x=WT_Background)) +
 
 BPBG_mutant_SQ_vertlabels <- BPBG_mutant_SQ+theme(axis.text.x=element_text(angle=90))
 print(BPBG_mutant_SQ_vertlabels)
-#Boxplots comparing the SQ measure of mutant phenotypes within each genetic background 
+#Box plots comparing the SQ measure of mutant phenotypes within each genetic background 
 
 
 BPBG_mutant_TA <- ggplot(Wing_Table_mmsqr, aes(y=TA_mmsqr, x=WT_Background)) +
@@ -48,5 +49,5 @@ BPBG_mutant_TA <- ggplot(Wing_Table_mmsqr, aes(y=TA_mmsqr, x=WT_Background)) +
 
 BPBG_mutant_TA_vertlabels <- BPBG_mutant_TA+theme(axis.text.x=element_text(angle=90))
 print(BPBG_mutant_TA_vertlabels)
-#Boxplots comparing the total area of mutant phenotypes within each genetic background 
+#Box plots comparing the total area of mutant phenotypes within each genetic background 
 
