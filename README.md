@@ -1,7 +1,7 @@
 # QMEE
-Used for QMEE
 
-Exercise 3
+## Exercise 3
+
 Main file to look at called: "GGboxplots" found in b-mcintyre/QMEE in the main branch
 data taken from data set titled "NEW_CD_DGRO_Subset_Data_2019_V2"
 
@@ -31,7 +31,7 @@ I placed comments above the code to state what I was doing, I titled my code in 
 code was created on in the script, I pipe-lined my code for the ability to easily break and edit my code, and I placed 
 the raw data utilized on github with this README file I stating where to find the code.  
 
-  The data is a subset of data from a previous experiment conducted in Dr. Ian Dworkin's lab by MSc Caitlyn Daley utilizing D. melanogaster. The data contains crosses of 8 mutant alleles on 2 genes in Oregon-R genetic background with 20 wild type backgrounds from the Drosophila Genetic Research Panel (GDRP). The alleles range from very weak to very severe phenotypic effects on wing phenotype. Severity was measured quantitatively as total area in pixels and semi-quantiatively as morphoicial changes on a scale of 1-21 A score of 1 was given to wings appearing morphologically wild type and 21 given to wings with more severe morphological changes.
+  The data is a subset of data from a previous experiment conducted in Dr. Ian Dworkin's lab by MSc Caitlyn Daley utilizing D. melanogaster. The data contains crosses of 8 mutant alleles on 2 genes in Oregon-R genetic background with 20 wild type backgrounds from the Drosophila Genetic Research Panel (DGRP). The alleles range from very weak to very severe phenotypic effects on wing phenotype. Severity was measured quantitatively as total area in pixels and semi-quantitatively as morphological changes on a scale of 1-21. A score of 1 was given to wings appearing morphologically wild type and 21 given to wings with more severe morphological changes.
 
 The Biological questions I am attempting to answer are if background genetic effects are specific to individual alleles, correlated in alleles of the same gene, or correlated with genes of common phenotypic effects. I would also like to know the variance of background genetic effects between and among strains.
 
