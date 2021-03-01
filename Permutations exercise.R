@@ -10,7 +10,7 @@ library("tidyverse")
 
 # please just run each code sequentially, I have commented above each piece of code what I have been having trouble
 # the area with the code I am having trouble with is in the commented permutations area under the brute force
-
+# using the data set located in the main branch of my repo
 
 
 wing_table <- read.csv("NEW_CD_DGRP_Subset_Data_2019_V2.csv")
