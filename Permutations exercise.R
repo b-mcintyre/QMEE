@@ -45,9 +45,7 @@ print(bp_TA)
 #or wild type genetic backgrounds and testing if the variability around the mean for each wild type background 
 #remains the same for each group. 
 
-# three aspects of the data I would like to scramble include the total wing area(can also be done for the 
-# Semi-quantitative scale)
-# and the predictors Allele_1 and WT background 
+# aspects of the data I would like to scramble include the predictors Allele_1 and WT background. 
 
 
 #### permutations ####
