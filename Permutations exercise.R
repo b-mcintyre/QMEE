@@ -7,6 +7,12 @@ library("coin")
 library("gtools")
 library("tidyverse")
 
+
+# please just run each code sequentially, I have commented above each piece of code what I have been having trouble
+# the area with the code I am having trouble with is in the commented permutations area under the brute force
+
+
+
 wing_table <- read.csv("NEW_CD_DGRP_Subset_Data_2019_V2.csv")
 
 wing_table$Allele_1 <- factor(wing_table$Allele_1)
@@ -21,7 +27,7 @@ wing_table_mmsqr <- wing_table %>%
     TotalArea.px = NULL
   )
 
-
+#visualization of data
 bp_TA <- ggplot(wing_table_mmsqr, aes(y=TA_mmsqr, x=WT_Background, colour=WT_Background)) +
   geom_boxplot() + 
   facet_wrap(~Allele_1) + 
@@ -52,6 +58,8 @@ print(bp_TA)
 
 #Brute force (takes awhile)
 #scrambled the predictor variable allele_1
+
+# Run this code to ends as properly placing the scrambled RSS in a vector 
 set.seed(101)
 nsim <- 9999
 res1 <- numeric(nsim)
@@ -62,26 +70,41 @@ for (i in 1:nsim) {
               %>% group_by(Allele_1, WT_Background)
               %>% mutate(dev=(TA_mmsqr-mean(TA_mmsqr))^2)
               %>% ungroup()
-              %>% summarise(RRS=sum(dev)))
+              %>% summarise(RSS=sum(dev))
+              %>% pull(RSS))
 }
 
+# Running this code creates the observed RSS
 obsgroupRSS <- wing_table_mmsqr %>%
   group_by(Allele_1, WT_Background) %>%
   mutate(dev=(TA_mmsqr-mean(TA_mmsqr))^2) %>% 
   ungroup() %>% 
-  summarise(RRS=sum(dev))
+  summarise(RSS=sum(dev)) %>%
+  pull(RSS)
 
-
+#Run this code to added the observed RSS to the vector  
 res1 <- c(res1, obsgroupRSS)
 
-res1 <- unlist(res1, use.names = FALSE)
 
-hist(res1, main="", xlim = range(136500,141000), breaks = 1500)
 
+#created histogram and set the ranges and breaks if I do not it results in a histogram that has one large bar
+#however the observed value is very far left of the other calculated values 
+hist(res1, las=1, main="", xlim = range(13500,141000), breaks = 1500)
+abline(v=obsgroupRSS, col="red")
+
+#Created a histogram, but there is one large bar example.  
+hist(res1, las=1, main="")
+
+#double the tails and have a result of 2 which is suspicious. 
 2*mean(res1>=obsgroupRSS)
+
+
+
+
 
 #scrambled the predictor variable WT_Background
 
+# Example of when I used unlist code.
 set.seed(101)
 nsim <- 9999
 res2 <- numeric(nsim)
@@ -95,13 +118,24 @@ for (i in 1:nsim) {
               %>% summarise(RRS=sum(dev)))
 }
 
-
+#created the observed groupRSS without using the pull. 
+obsgroupRSS <- wing_table_mmsqr %>%
+  group_by(Allele_1, WT_Background) %>%
+  mutate(dev=(TA_mmsqr-mean(TA_mmsqr))^2) %>% 
+  ungroup() %>% 
+  summarise(RSS=sum(dev))
+  
+#added the obsgroupRSS to create a list with 10 000 elements
 res2 <- c(res2, obsgroupRSS)
 
+#unlisted the list to allow for creation of histogram
 res2<- unlist(res2, use.names = FALSE)
 
-hist(res2, las=1, main="", xlim = range(27000,29000), breaks = 500)
+#same problem seen where the observed value is far away from the calculated shuffled values 
+hist(res2, las=1, main="", xlim = range(13000,29000), breaks = 500)
+abline(v=obsgroupRSS, col="red")
 
+# results in exactly two which is suspicious 
 2*mean(res2>=obsgrouped_means)
 
 #### using LmPerm package #### 
