@@ -65,13 +65,18 @@ for (i in 1:nsim) {
               %>% summarise(RRS=sum(dev)))
 }
 
+obsgroupRSS <- wing_table_mmsqr %>%
+  group_by(Allele_1, WT_Background) %>%
+  mutate(dev=(TA_mmsqr-mean(TA_mmsqr))^2) %>% 
+  ungroup() %>% 
+  summarise(RRS=sum(dev))
+
 
 res1 <- c(res1, obsgroupRSS)
 
 res1 <- unlist(res1, use.names = FALSE)
 
 hist(res1, main="", xlim = range(136500,141000), breaks = 1500)
-
 
 2*mean(res1>=obsgroupRSS)
 
