@@ -21,8 +21,6 @@ wing_table_mmsqr <- wing_table %>%
     TotalArea.px = NULL
   )
 
-wing_table_geno <- wing_table_mmsqr %>% unite(genotype, Allele_1,WT_Background) %>%
-  mutate(obs=seq(n()))
 
 bp_TA <- ggplot(wing_table_mmsqr, aes(y=TA_mmsqr, x=WT_Background, colour=WT_Background)) +
   geom_boxplot() + 
@@ -55,32 +53,6 @@ print(bp_TA)
 #### permutations ####
 
 #Brute force (takes awhile)
-# scrambled the response variable of TA_mmsqr
-set.seed(101)
-nsim <- 9999
-res <- numeric(nsim)
-for (i in 1:nsim) {
-  perm <- sample(nrow(wing_table_mmsqr))
-  bdat <- transform(wing_table_mmsqr, TA_mmsqr=TA_mmsqr[perm])
-  res[i] <- (bdat
-             %>% group_by(Allele_1, WT_Background)
-             %>% summarise(TA_mmsqr=mean(TA_mmsqr))
-             %>% pull(TA_mmsqr)
-             %>% diff())
-}
-
-obsgrouped_means <-wing_table_mmsqr %>%
-  group_by(Allele_1, WT_Background) %>%
-  mutate(mean(TA_mmsqr)) %>%
-  pull (TA_mmsqr)
-
-
-res <- c(res,obsgrouped_means)
-
-hist(res,las=1,main="")
-
-2*mean(res>=obsgrouped_means)  
-
 #scrambled the predictor variable allele_1
 set.seed(101)
 nsim <- 9999
@@ -88,63 +60,62 @@ res1 <- numeric(nsim)
 for (i in 1:nsim) {
   perm1 <- sample(nrow(wing_table_mmsqr))
   bdat1 <- transform(wing_table_mmsqr, Allele_1=Allele_1[perm1])
-  res1[i] <- (bdat
-             %>% group_by(Allele_1, WT_Background)
-             %>% summarise(TA_mmsqr=mean(TA_mmsqr))
-             %>% pull(TA_mmsqr)
-             %>% diff())
+  res1[i] <- (bdat1
+              %>% group_by(Allele_1, WT_Background)
+              %>% mutate(dev=(TA_mmsqr-mean(TA_mmsqr))^2)
+              %>% ungroup()
+              %>% summarise(RRS=sum(dev)))
 }
 
-obsgrouped_means <-wing_table_mmsqr %>%
-  group_by(Allele_1, WT_Background) %>%
-  mutate(mean(TA_mmsqr)) %>%
-  pull (TA_mmsqr)
 
-res1 <- c(res1, obsgrouped_means)
+res1 <- c(res1, obsgroupRSS)
 
-hist(res1, las=1, main="")
+res1 <- unlist(res1, use.names = FALSE)
 
-2*mean(res1>=obsgrouped_means)
+hist(res1, main="", xlim = range(136500,141000), breaks = 1500)
+
+
+2*mean(res1>=obsgroupRSS)
 
 #scrambled the predictor variable WT_Background
 
-set.seed(104)
+set.seed(101)
 nsim <- 9999
 res2 <- numeric(nsim)
 for (i in 1:nsim) {
   perm2 <- sample(nrow(wing_table_mmsqr))
   bdat2 <- transform(wing_table_mmsqr, WT_Background=WT_Background[perm2])
-  res2[i] <- (bdat
+  res2[i] <- (bdat2
               %>% group_by(Allele_1, WT_Background)
-              %>% summarise(TA_mmsqr=mean(TA_mmsqr))
-              %>% pull(TA_mmsqr)
-              %>% diff())
+              %>% mutate(dev=(TA_mmsqr-mean(TA_mmsqr))^2)
+              %>% ungroup()
+              %>% summarise(RRS=sum(dev)))
 }
 
-obsgrouped_means <-wing_table_mmsqr %>%
-  group_by(Allele_1, WT_Background) %>%
-  mutate(mean(TA_mmsqr)) %>%
-  pull (TA_mmsqr)
 
-res2 <- c(res2, obsgrouped_means)
+res2 <- c(res2, obsgroupRSS)
 
-hist(res2, las=1, main="")
+res2<- unlist(res2, use.names = FALSE)
+
+hist(res2, las=1, main="", xlim = range(27000,29000), breaks = 500)
 
 2*mean(res2>=obsgrouped_means)
 
-# using LmPerm package 
+#### using LmPerm package #### 
 
 Allele_1lmp<- summary(lmp(TA_mmsqr~Allele_1,data = wing_table_mmsqr))
+summary(Allele_1lmp)
 
 WT_Backgroundlmp <- summary(lmp(TA_mmsqr~WT_Background,data = wing_table_mmsqr))
+summary(WT_Backgroundlmp)
 
-#using coin package
+#### using coin package ####
 
 Allele_1coin <- oneway_test(TA_mmsqr~Allele_1,data=wing_table_mmsqr,distribution=approximate(nresample=9999))
-
+summary(Allele_1coin)
 
 WT_Backgroundcoin <- oneway_test(TA_mmsqr~WT_Background,data=wing_table_mmsqr,distribution=approximate(nresample=9999))
-
+summary(WT_Backgroundcoin)
 
 
             
