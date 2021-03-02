@@ -8,9 +8,7 @@ library("gtools")
 library("tidyverse")
 
 
-# please just run each code sequentially, I have commented above each piece of code what I have been having trouble
-# the area with the code I am having trouble with is in the commented permutations area under the brute force
-# using the data set located in the main branch of my repo
+# using the data set located in the main branch of my repo titled "NEW_CD_DGRO_Subset_Data_2019_V2
 
 
 wing_table <- read.csv("NEW_CD_DGRP_Subset_Data_2019_V2.csv")
@@ -59,7 +57,7 @@ print(bp_TA)
 #Brute force (takes awhile)
 #scrambled the predictor variable allele_1
 
-# Run this code to ends as properly placing the scrambled RSS in a vector 
+# Run this code to ends as properly placing the scrambled RSS in a vector using pull as suggested by BB
 set.seed(101)
 nsim <- 9999
 res1 <- numeric(nsim)
@@ -74,7 +72,7 @@ for (i in 1:nsim) {
               %>% pull(RSS))
 }
 
-# Running this code creates the observed RSS
+# Running this code creates the observed RSS using pull as suggested by BB
 obsgroupRSS <- wing_table_mmsqr %>%
   group_by(Allele_1, WT_Background) %>%
   mutate(dev=(TA_mmsqr-mean(TA_mmsqr))^2) %>% 
@@ -87,15 +85,15 @@ res1 <- c(res1, obsgroupRSS)
 
 
 
-#created histogram and set the ranges and breaks if I do not it results in a histogram that has one large bar
-#however the observed value is very far left of the other calculated values 
+# Created histogram and set the ranges and breaks if I do not it results in a histogram that has one large bar
+# The observed RSS is much less than the null RSS 
 hist(res1, las=1, main="", xlim = range(13500,141000), breaks = 1500)
 abline(v=obsgroupRSS, col="red")
 
 #Created a histogram, but there is one large bar example.  
 hist(res1, las=1, main="")
 
-#double the tails and have a result of 2 which is suspicious. 
+#double the tails and have a result of 2 which seems too clean of a number. 
 2*mean(res1>=obsgroupRSS)
 
 
@@ -104,7 +102,7 @@ hist(res1, las=1, main="")
 
 #scrambled the predictor variable WT_Background
 
-# Example of when I used unlist code.
+# Example of when I used unlist code vs pull. This code creates a list with 9999 elements.
 set.seed(101)
 nsim <- 9999
 res2 <- numeric(nsim)
@@ -118,7 +116,7 @@ for (i in 1:nsim) {
               %>% summarise(RRS=sum(dev)))
 }
 
-#created the observed groupRSS without using the pull. 
+#created the observed groupRSS shown as a list with 1 element
 obsgroupRSS <- wing_table_mmsqr %>%
   group_by(Allele_1, WT_Background) %>%
   mutate(dev=(TA_mmsqr-mean(TA_mmsqr))^2) %>% 
@@ -131,11 +129,10 @@ res2 <- c(res2, obsgroupRSS)
 #unlisted the list to allow for creation of histogram
 res2<- unlist(res2, use.names = FALSE)
 
-#same problem seen where the observed value is far away from the calculated shuffled values 
+# Again, the observed value is far away from the calculated shuffled values 
 hist(res2, las=1, main="", xlim = range(13000,29000), breaks = 500)
 abline(v=obsgroupRSS, col="red")
-
-# results in exactly two which is suspicious 
+ 
 2*mean(res2>=obsgrouped_means)
 
 #### using LmPerm package #### 
