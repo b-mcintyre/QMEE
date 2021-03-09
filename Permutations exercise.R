@@ -1,5 +1,7 @@
 # Permutations assignment
 
+## BMB: PLEASE no spaces in file names ...
+
 #### Prelims ####
 library("ggplot2")
 library("lmPerm")
@@ -24,6 +26,8 @@ wing_table_mmsqr <- wing_table %>%
     TA_mmsqr = TotalArea.px * px.mmsqr_conversion,
     TotalArea.px = NULL
   )
+## BMB: ideally you would start putting some of these conversions in a
+## preliminary step and reading from an intermediate rds/rda file 
 
 #visualization of data
 bp_TA <- ggplot(wing_table_mmsqr, aes(y=TA_mmsqr, x=WT_Background, colour=WT_Background)) +
@@ -35,6 +39,7 @@ bp_TA <- ggplot(wing_table_mmsqr, aes(y=TA_mmsqr, x=WT_Background, colour=WT_Bac
   theme(axis.text.x = element_text(angle = 90))
 
 print(bp_TA)
+## BMB: colors redundant? at least you could get rid of the key
 
 #### Null Hypothesis ####
 
@@ -49,12 +54,15 @@ print(bp_TA)
 #or wild type genetic backgrounds and testing if the variability around the mean for each wild type background 
 #remains the same for each group. 
 
+## BMB: are you testing differences in VARIABILITY or MEAN?  Looks to me
+## like mean, but I could be confused.
+
 # aspects of the data I would like to scramble include the predictors Allele_1 and WT background. 
 
 
 #### permutations ####
 
-#Brute force (takes awhile)
+#Brute force (takes awhile) ## BMB: good to know if this is minutes/hours
 #scrambled the predictor variable allele_1
 
 # Run this code to ends as properly placing the scrambled RSS in a vector using pull as suggested by BB
@@ -62,6 +70,7 @@ set.seed(101)
 nsim <- 9999
 res1 <- numeric(nsim)
 for (i in 1:nsim) {
+  if (i %% 100 == 0) cat(".")  ## cheap BMB: progress bar
   perm1 <- sample(nrow(wing_table_mmsqr))
   bdat1 <- transform(wing_table_mmsqr, Allele_1=Allele_1[perm1])
   res1[i] <- (bdat1
@@ -95,18 +104,19 @@ hist(res1, las=1, main="")
 
 #double the tails and have a result of 2 which seems too clean of a number. 
 2*mean(res1>=obsgroupRSS)
-
-
-
-
+## BMB: Your value is **LESS** than the null distribution.  The p-value should
+## be effectively zero unless you run about a billion simulations ...
 
 #scrambled the predictor variable WT_Background
 
 # Example of when I used unlist code vs pull. This code creates a list with 9999 elements.
 set.seed(101)
 nsim <- 9999
+## BMB: slightly fancier progress bar
+pb <- txtProgressBar(style=3,max=nsim)
 res2 <- numeric(nsim)
 for (i in 1:nsim) {
+  setTxtProgressBar(pb, i)
   perm2 <- sample(nrow(wing_table_mmsqr))
   bdat2 <- transform(wing_table_mmsqr, WT_Background=WT_Background[perm2])
   res2[i] <- (bdat2
@@ -132,12 +142,16 @@ res2<- unlist(res2, use.names = FALSE)
 # Again, the observed value is far away from the calculated shuffled values 
 hist(res2, las=1, main="", xlim = range(13000,29000), breaks = 500)
 abline(v=obsgroupRSS, col="red")
- 
-2*mean(res2>=obsgrouped_means)
+
+## BMB???? this variable doesn't exist??
+## 2*mean(res2>=obsgrouped_means)
 
 #### using LmPerm package #### 
 
 Allele_1lmp<- summary(lmp(TA_mmsqr~Allele_1,data = wing_table_mmsqr))
+## BMB: you shouldn't take the summary of a summary, it's junk ... ???
+## (save the lmp() result, then run summary() on it - saving the lmp()
+## result is good in case you want to do something else with it)
 summary(Allele_1lmp)
 
 WT_Backgroundlmp <- summary(lmp(TA_mmsqr~WT_Background,data = wing_table_mmsqr))
@@ -152,4 +166,12 @@ WT_Backgroundcoin <- oneway_test(TA_mmsqr~WT_Background,data=wing_table_mmsqr,di
 summary(WT_Backgroundcoin)
 
 
+## BMB: once again, summary() is inappropriate here (did you look at the
+## results??)
             
+## BMB:
+##  we were hoping for two _qualitatively different_ tests, not what
+## is effectively the same test run on two different variables ...
+## (how would you test the interaction?)
+
+## grade: 2
