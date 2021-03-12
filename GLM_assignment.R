@@ -37,9 +37,10 @@ summary(interactglm)
 plot(interactglm)
 
 
-# residuals vs leverage show there is not an obvious pattern, larger residuals around the center
+# residuals vs leverage show there is not an obvious pattern, possibly larger variation residuals around the center?
 # The Normal Q-Q shows increased variation from normal distribution than a lm without log transformation
-# scale location is showing greater homoscedacity as the predicted value decreases
+# scale location is showing greater homoscedacity as the predicted value decreases, larger hooscedacity around the 
+# center 
 # all values appear to be within cook's distance
 # I'm not noticing much of a difference between this glm and log transforming my lm
 
