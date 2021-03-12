@@ -19,12 +19,6 @@ wing_table$Allele_1 <- factor(wing_table$Allele_1, levels = c("OREw", "sd[1]", "
 
 wing_table$WT_Background <- factor(wing_table$WT_Background)
 
-# OREw as the first variable as it is wild type is a good biological starting point
-# reordering the background is not applicable, no reason to have one as a zero comparison 
-# point over the other 
-wing_table$Allele_1 <- relevel(wing_table$Allele_1, "OREw")
-levels(wing_table$Allele_1)
-
 
 px.mmsqr_conversion <- 0.00005375
 
@@ -65,7 +59,7 @@ plot(interact_em,~Allele_1|WT_Background, comparisons = TRUE) +
 
 emmip(interactglm, WT_Background ~ Allele_1)
 # plot showing increased variation for the moderate (sdETX4 and sdE3) alleles
-# based on the DGRP backgrounds 
+# based on interacting with the DGRP backgrounds 
 
 
 Anova(interactglm)
