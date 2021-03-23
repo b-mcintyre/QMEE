@@ -33,9 +33,8 @@ wing_table_mmsqr <- wing_table %>%
   )
 
 
-
-
 #### Diagnostic plots for Allele_1 and WT_Background ####
+## JD: In my experience it's ALWAYS worth converting tapply code to tidy code
 Allele_means <- with(wing_table_mmsqr, tapply(TA_mmsqr,Allele_1,mean))
 print(Allele_means)
 
@@ -141,3 +140,7 @@ Anova(interact)
 # genetic background effects, in our model treated all backgrounds as having the same effect
 # on mutant alleles, do not think this is the case and can possibly account for at least
 # a portion of the residuals. 
+
+# JD: Seems sensible. Not sure why you needed to do so many models. It seems like you have plenty of power and the interact model is the one you're interested in. The question now seems to be how to visualize these "clear" results in a way a human can understand.
+
+# Grade 2.1/3
