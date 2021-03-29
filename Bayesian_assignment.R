@@ -6,6 +6,9 @@ library(broom.mixed)
 library(lme4)
 
 # I was receiving syntax errors that I wasn't entirely sure what I was doing wrong.
+# I just don't think I understand what the for loop is running. 
+# I know for my priors I believe the effect of the mutant allele will be much larger than the 
+# wild type background 
 # This uses the cleand_wing_table.rda file on the main page of my repo.
 
 ## utility for constructing an automatically named list
@@ -19,6 +22,7 @@ interact <-lm(formula=TA_mmsqr ~ WT_Background * Allele_1,
               data=wing_table_mmsqr)
 anova(interact)
 
+summary(interact)
 #### interaction model #### 
 
 ## create list of data
@@ -76,4 +80,35 @@ tidy(j3, conf.int=TRUE, conf.method="quantile")
 
 
 ?jags
+
+
+#### dataframe creation method ####
+
+#### BB example given ####
+    dd <- expand.grid(f=factor(letters[1:3]), 
+                      g= factor(LETTERS[1:3])); 
+    model.matrix(~f+g, data=dd); model.matrix(~f*g, data=dd)
+
+# figuring out the parts of this code
+?expand.grid
+
+dd1 <- expand.grid(f=factor(letters[1:3]),
+                   g=factor(LETTERS[1:3]))
+mm1 <-model.matrix(~f+g, data = dd1)
+mm2 <-model.matrix(~f*g, data=dd1)
+
+
+# Creation of dataframe and design matrices with own data.
+
+DD2 <- expand.grid(allele = wing_table_mmsqr$Allele_1, 
+                   wtbackground = wing_table_mmsqr$WT_Background); 
+model.matrix(~ allele + wtbackground, data = DD2);
+model.matrix(~ allele * wtbackground, data= DD2)
+
+# have result of the second martrix unable to be created because the vector size is over 40.5 Gb 
+
+
+
+
+
 
