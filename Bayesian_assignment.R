@@ -4,12 +4,13 @@ library(R2jags)
 library(coda)
 library(broom.mixed)
 library(lme4)
+library(arm)
 
 # I was receiving syntax errors that I wasn't entirely sure what I was doing wrong.
 # I just don't think I understand what the for loop is running. 
-# I know for my priors I believe the effect of the mutant allele will be much larger than the 
+# I know for my priors I believe the variation of the mutant allele will be much larger (precision lower) than the 
 # wild type background 
-# This uses the cleand_wing_table.rda file on the main page of my repo.
+# This uses the cleaned_wing_table.rda file on the main page of my repo.
 
 ## utility for constructing an automatically named list
 named_list <- lme4:::namedList
@@ -35,6 +36,7 @@ wingdat1 <- with(wing_table_mmsqr,
                            TA_mmsqr))                   ## TA measurements 
 
 
+# I don't think I really understand what is going in in this for loop...?
 interact_mutant_background_model1<- function() {
   for (i in 1:N) {
     Allelepred[i] <- b_Allele_1[Allele_1[i]] ## predicted (counts)
@@ -82,7 +84,11 @@ tidy(j3, conf.int=TRUE, conf.method="quantile")
 ?jags
 
 
-#### dataframe creation method ####
+#Try with bayesglm 
+b1 <- bayesglm(TA_mmsqr~ WT_Background|Allele_1, data = wingdat1)
+#error message of arguments imply differing number of rows...
+
+#### matrix creation method ####
 
 #### BB example given ####
     dd <- expand.grid(f=factor(letters[1:3]), 
@@ -98,17 +104,56 @@ mm1 <-model.matrix(~f+g, data = dd1)
 mm2 <-model.matrix(~f*g, data=dd1)
 
 
-# Creation of dataframe and design matrices with own data.
+# Creation of data frame DD2 and design matrices with own data #
 
 DD2 <- expand.grid(allele = wing_table_mmsqr$Allele_1, 
                    wtbackground = wing_table_mmsqr$WT_Background); 
 model.matrix(~ allele + wtbackground, data = DD2);
 model.matrix(~ allele * wtbackground, data= DD2)
 
-# have result of the second martrix unable to be created because the vector size is over 40.5 Gb 
+# Error of second martrix unable to be created because the vector size is over 40.5 Gb 
+
+DD2 <- expand.grid(allele = levels(wing_table_mmsqr$Allele_1),                   
+                        wtbackground = levels(wing_table_mmsqr$WT_Background));
+x <- model.matrix(~ allele + wtbackground, data = DD2)
+y <- model.matrix(~ allele * wtbackground, data= DD2)
+
+#pass the levels of the factor vs the whole data set
+
+# now have design matrices
+# not sure how to pass them to jags as x? checked the jags user manual, in the appendix talks about using dim
+# within structure to give information on the dimensions 
+
+interact_model <- function() {
+  for (i in 1:N) {
+    y[i] ~ dnorm(pred[i], tau)
+    pred[i] = inprod(X[i,],beta) + inprod(Y[i,],alpha)
+    Y <- model.matrix(~ allele + wtbackground, data = DD2)
+    X <- model.matrix(~ allele * wtbackground, data= DD2)
+    Y <- structure(x, dim(180, 28))
+    X <- structure(y, dim(180,180))
+    
+  }
+  #priors
+  # I'm not sure what I would call the allele/background priors as here to tell jags to run them?
+  # would I just use Allele_1/WT_Background
+  # for these I believe Allele_1 would have less precision or be more variable than the WT_Background 
+  # Also I would set the mean to be greater than zero as my starting point 
+  # try saving beta, alpha, and tau? 
+  
+  tau ~ dgamma (0.001, 0.001) # precision 
+beta[i] ~ dnorm (0, 0.0001)
+alpha[i] ~ dnorm(0, 0.0001)
+}
+
+jagsintereact <- jags(data= DD2, 
+                      inits = NULL,
+                      parameters.to.save =c("beta","alpha", "tau"), 
+                      model.file = interact_model)
+
+tidy(jagsintereact, conf.int=TRUE, conf.method="quantile")
 
 
 
-
-
-
+args(structure)
+?structure
