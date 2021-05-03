@@ -12,6 +12,8 @@ library(arm)
 # wild type background 
 # This uses the cleaned_wing_table.rda file on the main page of my repo.
 
+## JD: See the comments below, and then please submit a version that I can run if you want this to be graded. It can be simple (and I'm not going to look at it long).
+
 ## utility for constructing an automatically named list
 named_list <- lme4:::namedList
 
@@ -37,6 +39,10 @@ wingdat1 <- with(wing_table_mmsqr,
 
 
 # I don't think I really understand what is going in in this for loop...?
+## JD: Well then where did you get it?
+## JD: When it says line 7, you can count from the first line of the function
+## so it's the ~ statement. You are saying that TA_mmsqr is distributed "like" the constant pred[i], which doesn't make sense. You're also making that same assertion N times for possibly different values of the constant, which would be bad even if you were making it correctly the first time
+## Distribution assertions should have distributions, and have a different predicate each time they are made (like the onese in your second loop.
 interact_mutant_background_model1<- function() {
   for (i in 1:N) {
     Allelepred[i] <- b_Allele_1[Allele_1[i]] ## predicted (counts)
