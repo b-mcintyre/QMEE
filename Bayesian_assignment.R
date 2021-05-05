@@ -57,7 +57,7 @@ pooled_var="
     
   }
 "
-#complie model
+#compile model
 AnovaJags <- jags.model(textConnection(pooled_var),
                         data=data,
                         n.chains = 5,
