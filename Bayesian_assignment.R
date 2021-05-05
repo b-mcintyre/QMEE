@@ -14,7 +14,7 @@ library(ggmcmc)
 
 
 
-#### Simple one way anova in Jags ####
+#### Simple one-way ANOVA in Jags ####
 
 load("cleaned_wing_table.rda")
 
@@ -36,9 +36,9 @@ overall_mean
 #define model
 pooled_var="
   model {
-      #######  Likelihood
-      for (i in 1:N) {                    # Loop through observations
-        mu[i]<-Beta[ind[i]]               # The expected values are the group means
+      # likelihood
+      for (i in 1:N) {                    
+        mu[i]<-Beta[ind[i]]               # the expected values are the group means
         y[i] ~ dnorm(mu[i],tau)           
        
       }
@@ -46,7 +46,7 @@ pooled_var="
     for (j in 1:p) {
      Beta[j]~dnorm(0,0.0001)
    
-     Effect[j]<-Beta[j]-13.02322  ### Calculate difference from overall mean
+     Effect[j]<-Beta[j]-13.02322  # calculate difference from overall mean
      
       for (n in 1:(j-1)){
         Difbeta[n,j]<-Beta[n]-Beta[j] # calculate pairwise differences
@@ -238,5 +238,4 @@ tidy(jagsintereact, conf.int=TRUE, conf.method="quantile")
 
 
 
-args(structure)
-?structure
+
