@@ -5,7 +5,84 @@ library(coda)
 library(broom.mixed)
 library(lme4)
 library(arm)
+library(tidyverse)
+library(ggplot2)
+library(lme4)
+library(coda)
+library(ggmcmc)
 
+
+
+
+#### Simple one way anova in Jags ####
+
+load("cleaned_wing_table.rda")
+
+wing_table_mmsqr$Allele_1 <- relevel(wing_table_mmsqr$Allele_1, "OREw")
+
+
+wingmeans <- wing_table_mmsqr %>%  
+  summarise (meansizes = mean(TA_mmsqr),
+             mutant = Allele_1)
+
+data=list(y=wingmeans$meansizes,
+          ind=as.numeric(wingmeans$mutant),
+          N=length(wingmeans$meansizes),
+          p=length(levels(wingmeans$mutant)))
+
+overall_mean <- mean(wingmeans$meansizes)
+overall_mean
+
+#define model
+pooled_var="
+  model {
+      #######  Likelihood
+      for (i in 1:N) {                    # Loop through observations
+        mu[i]<-Beta[ind[i]]               # The expected values are the group means
+        y[i] ~ dnorm(mu[i],tau)           
+       
+      }
+     # weak priors
+    for (j in 1:p) {
+     Beta[j]~dnorm(0,0.0001)
+   
+     Effect[j]<-Beta[j]-13.02322  ### Calculate difference from overall mean
+     
+      for (n in 1:(j-1)){
+        Difbeta[n,j]<-Beta[n]-Beta[j] # calculate pairwise differences
+      }
+    }
+    
+    tau ~ dgamma(0.000001,1)
+    
+  }
+"
+#complie model
+AnovaJags <- jags.model(textConnection(pooled_var),
+                        data=data,
+                        n.chains = 5,
+                        inits = NULL)
+
+#simulated posterior
+anova_sim <- coda.samples(model = AnovaJags, 
+                          variable.names = c("Difbeta", "Effect"), 
+                          n.iter = 10000, 
+                          thin = 10)
+
+ms <- ggs(anova_sim)
+mt <- filter(ms,grepl("Difbeta", Parameter))
+
+#shows pairwise differences
+ggs_caterpillar(mt) + geom_vline(xintercept = 0, color = "red")
+
+ml <- filter(ms,grepl("Effect", Parameter))
+
+#shows difference from overall mean
+ggs_caterpillar(ml) + geom_vline(xintercept = 0, color = "red")
+
+
+
+#### PLEASE IGNORE ####
 # I was receiving syntax errors that I wasn't entirely sure what I was doing wrong.
 # I just don't think I understand what the for loop is running. 
 # I know for my priors I believe the variation of the mutant allele will be much larger (precision lower) than the 
